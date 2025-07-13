@@ -10,14 +10,18 @@ export const startHandler = (ctx: Context) => {
     
 📩 <b>Hikoyangiz "istalgan formatda" bo'lishi mumkin:</b>
 - Matn
-- Rasm, video, stiker, ovozli xabar
+- Rasm, video, ovozli xabar
 
 ✨<b>Ixtiyoriy:</b>
 👉 Oxirida universitet nomini yozsangiz, boshqalar uchun qiziqroq va haqiqatga yaqinroq bo'ladi.
 
 <b>📢Hikoyalar ushbu kanalda ulashiladi:</b> ${channelURL} 
-    
-<b>Anonimlik 💯 kafolatlanadi.</b>`, 
+
+<b>Anonimlik 💯 kafolatlanadi.</b>
+
+🛡️Maxfiylik siyosati bilan ushbu link orqali tanishib chiqishingiz mumkin:
+<a href="https://talabasirlaribot.web.app/privacy">Maxfiylik siyosati</a>
+`, 
     {parse_mode: "HTML",}
   );
 }
