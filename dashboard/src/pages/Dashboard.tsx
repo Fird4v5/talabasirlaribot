@@ -11,7 +11,7 @@ import {
   deleteDoc,
   doc,
 } from "firebase/firestore";
-import type { Confession } from "../../../shared/confession"
+import type { Confession } from "../../../shared/confession";
 
 const FILTERS = ["pending", "approved", "posted"] as const;
 type Filter = typeof FILTERS[number];
@@ -100,7 +100,7 @@ export default function Dashboard() {
           <button
             key={f}
             onClick={() => setFilter(f)}
-            className={`px-4 py-1.5 rounded-full text-sm font-medium transition ${
+            className={`px-4 py-1.5 rounded-full text-sm font-medium transition cursor-pointer ${
               filter === f
                 ? "bg-blue-600 text-white"
                 : "bg-gray-200 text-gray-700 hover:bg-gray-300"
@@ -125,16 +125,16 @@ export default function Dashboard() {
             )}
             <div className="flex gap-2 mt-4">
               {conf.status === "pending" && (
-                <button className="btn-blue" onClick={() => handleApprove(conf.id)}>
+                <button className="btn-blue cursor-pointer" onClick={() => handleApprove(conf.id)}>
                   ✅ Approve
                 </button>
               )}
               {conf.status === "approved" && (
-                <button className="btn-green" onClick={() => handleMarkPosted(conf.id)}>
+                <button className="btn-green cursor-pointer" onClick={() => handleMarkPosted(conf.id)}>
                   📣 Mark as Posted
                 </button>
               )}
-              <button className="btn-red" onClick={() => handleDelete(conf.id)}>
+              <button className="btn-red cursor-pointer" onClick={() => handleDelete(conf.id)}>
                 🗑 Delete
               </button>
             </div>
@@ -146,17 +146,17 @@ export default function Dashboard() {
 }
 
 function MediaPreviewOnDemand({ id, type }: { id: string; type: string }) {
-  const [filePath, setFilePath] = useState<string | null>(null);
+  const [url, setUrl] = useState<string | null>(null);
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const fetchFilePath = async () => {
+  const fetchUrl = async () => {
     try {
       setLoading(true);
-      const res = await fetch(`/api/regeneratePreview?id=${id}`);
+      const res = await fetch(`https://talabasirlaribot.fly.dev/regeneratePreview?id=${id}`);
       const data = await res.json();
-      if (!data.file_path) throw new Error("No file_path returned");
-      setFilePath(data.file_path);
+      if (!data.url) throw new Error("No preview URL returned");
+      setUrl(data.url);
     } catch (e) {
       setError(true);
     } finally {
@@ -164,22 +164,18 @@ function MediaPreviewOnDemand({ id, type }: { id: string; type: string }) {
     }
   };
 
-  const url = filePath
-    ? `https://api.telegram.org/file/bot${import.meta.env.VITE_BOT_TOKEN}/${filePath}`
-    : null;
-
   return (
     <div className="space-y-2">
-      {!filePath && !error && (
-        <button className="btn-blue" onClick={fetchFilePath}>
+      {!url && !error && (
+        <button className="btn-blue cursor-pointer" onClick={fetchUrl}>
           {loading ? "Loading..." : "👁 Preview Media"}
         </button>
       )}
       {error && <p className="text-red-500">⚠️ Failed to load preview</p>}
 
-      {filePath && type === "photo" && <img src={url!} className="max-w-xs rounded-lg" />}
-      {filePath && type === "video" && <video src={url!} controls className="max-w-xs rounded-lg" />}
-      {filePath && type === "voice" && <audio src={url!} controls className="w-full" />}
+      {url && type === "photo" && <img src={url} className="max-w-xs rounded-lg" />}
+      {url && type === "video" && <video src={url} controls className="max-w-xs rounded-lg" />}
+      {url && type === "voice" && <audio src={url} controls className="w-full" />}
     </div>
   );
 }

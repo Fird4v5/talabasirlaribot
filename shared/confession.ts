@@ -1,3 +1,5 @@
+
+
 export type Confession = {
   type: "text" | "photo" | "video" | "voice" | "sticker";
   content: string | {
@@ -5,7 +7,7 @@ export type Confession = {
     file_unique_id: string;
   };
   status: "pending" | "approved";
-  createdAt: Date;
+  createdAt: any;
   telegramUserId: string;
   username?: string | null;
 };
