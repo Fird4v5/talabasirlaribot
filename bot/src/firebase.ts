@@ -1,5 +1,7 @@
 // firebase.ts
 import admin from "firebase-admin";
+import dotenv from 'dotenv'; 
+dotenv.config(); 
 
 if (!admin.apps.length) {
   const serviceAccountBase64 = process.env.FIREBASE_SERVICE_ACCOUNT_BASE64;

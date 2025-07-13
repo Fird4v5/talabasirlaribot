@@ -21,6 +21,7 @@ bot.on("message:photo", photoHandler);
 bot.on("message:voice", voiceHandler);
 bot.on("message:video", videoHandler);
 
+
 // 🧯 Global bot error catcher
 bot.catch((err) => {
   console.error("❌ Error in bot:", err);
