@@ -11,7 +11,7 @@ import {
   deleteDoc,
   doc,
 } from "firebase/firestore";
-import type { Confession } from "../../../shared/confession";
+import type { Confession } from "../confession";
 
 const FILTERS = ["pending", "approved", "posted"] as const;
 type Filter = typeof FILTERS[number];
