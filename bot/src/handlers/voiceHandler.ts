@@ -1,6 +1,6 @@
 import { Context } from "grammy";
 import { db } from "../firebase";
-import { Confession } from "../../../shared/confession";
+import { Confession } from "../confession";
 
 export const voiceHandler = async (ctx: Context) => {
   const voice = ctx.message?.voice;
