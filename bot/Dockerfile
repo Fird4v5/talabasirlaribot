@@ -7,7 +7,7 @@ WORKDIR /app
 COPY package.json package-lock.json ./
 RUN npm install
 
-# Then copy the rest (including your src files)
+# Then copy the rest of the project files
 COPY . .
 
 # Build TypeScript into dist/
@@ -19,10 +19,10 @@ FROM node:20-alpine
 
 WORKDIR /app
 
-# Copy only compiled output and production dependencies
+# Copy compiled JS output and production dependencies
 COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/package.json ./
 
-# Tell Fly to run your built JS file
+# Start the app
 CMD ["node", "dist/index.js"]

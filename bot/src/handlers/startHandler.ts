@@ -1,6 +1,5 @@
 import { Context } from "grammy"
-import dotenv from "dotenv";
-dotenv.config();
+
 
 const channelURL = process.env.CHANNEL_KEY!;
 

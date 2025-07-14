@@ -1,42 +1,71 @@
-import { Bot, webhookCallback } from "grammy";
-import dotenv from "dotenv";
-dotenv.config();
+process.on("uncaughtException", (err) => {
+  console.error("💥 Uncaught Exception:", err);
+});
+process.on("unhandledRejection", (reason) => {
+  console.error("💥 Unhandled Rejection:", reason);
+});
 
+// ✅ ENV Check
+if (!process.env.BOT_TOKEN) {
+  console.error("❌ BOT_TOKEN is missing. Did you set it with `fly secrets set BOT_TOKEN=...`?");
+  process.exit(1);
+}
+
+// If you use FIREBASE_SERVICE_ACCOUNT_BASE64, validate it too
+if (!process.env.FIREBASE_SERVICE_ACCOUNT_BASE64) {
+  console.error("❌ FIREBASE_SERVICE_ACCOUNT_BASE64 is missing.");
+  process.exit(1);
+}
+
+// ✅ Firebase service account decoding (you can move this to ./firebase if already handled there)
+import admin from "firebase-admin";
+import express from "express";
+import { Bot, webhookCallback } from "grammy";
+
+const raw = process.env.FIREBASE_SERVICE_ACCOUNT_BASE64;
+let serviceAccount: admin.ServiceAccount;
+try {
+  const decoded = Buffer.from(raw!, "base64").toString("utf-8");
+  serviceAccount = JSON.parse(decoded);
+} catch (err) {
+  console.error("❌ Failed to decode Firebase credentials:", err);
+  process.exit(1);
+}
+
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount),
+});
+import { db } from "./firebase";
+
+// 🎯 Initialize bot
+const bot = new Bot(process.env.BOT_TOKEN);
+
+// ✅ Register bot handlers
 import { startHandler } from "./handlers/startHandler";
 import { textHandler } from "./handlers/textHandler";
 import { photoHandler } from "./handlers/photoHandler";
 import { videoHandler } from "./handlers/videoHandler";
 import { voiceHandler } from "./handlers/voiceHandler";
 
-import { db } from "./firebase";
-import express from "express";
-
-// 🎯 Initialize bot
-const bot = new Bot(process.env.BOT_TOKEN!);
-
-// ✅ Register bot handlers
 bot.command("start", startHandler);
 bot.on("message:text", textHandler);
 bot.on("message:photo", photoHandler);
 bot.on("message:voice", voiceHandler);
 bot.on("message:video", videoHandler);
 
-
-// 🧯 Global bot error catcher
+// 🧯 Global error catcher
 bot.catch((err) => {
   console.error("❌ Error in bot:", err);
 });
 
-// 🚀 Express server setup
+// 🚀 Express setup
 const server = express();
 server.use(express.json());
 
-// ✅ Health check route (needed for Fly.io)
 server.get("/", (_req, res) => {
   res.send("Bot is healthy.");
 });
 
-// ✅ Regenerate media preview route
 server.get("/regeneratePreview", async (req, res) => {
   const id = req.query.id as string;
   if (!id) {
@@ -65,10 +94,8 @@ server.get("/regeneratePreview", async (req, res) => {
   }
 });
 
-// 🪝 Webhook route (Grammy-native, stable & fast)
 server.use("/webhook", webhookCallback(bot, "express"));
 
-// 🔌 Start server
 const PORT = parseInt(process.env.PORT || "3000", 10);
 const HOST = "0.0.0.0";
 

@@ -1,8 +1,6 @@
 import { Context } from "grammy";
 import { db } from "../firebase";
-import { Confession } from "../confession";
-import dotenv from "dotenv"; 
-dotenv.config(); 
+import { Confession } from "../confession"; 
 
 export const photoHandler = async (ctx: Context) => {
 
@@ -28,7 +26,7 @@ export const photoHandler = async (ctx: Context) => {
     }
 
     // 5. Create the confession object with the new file_id
-    
+
     const confession: Confession = {
         type: "photo", 
         content: {

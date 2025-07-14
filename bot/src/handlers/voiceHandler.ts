@@ -1,8 +1,7 @@
 import { Context } from "grammy";
 import { db } from "../firebase";
 import { Confession } from "../confession";
-import dotenv from 'dotenv'; 
-dotenv.config(); 
+
 
 export const voiceHandler = async (ctx: Context) => {
 
