@@ -20,6 +20,7 @@ if (!process.env.FIREBASE_SERVICE_ACCOUNT_BASE64) {
 // ✅ Firebase service account decoding (you can move this to ./firebase if already handled there)
 import admin from "firebase-admin";
 import express from "express";
+import cors from "cors"; 
 import { Bot, webhookCallback } from "grammy";
 
 const raw = process.env.FIREBASE_SERVICE_ACCOUNT_BASE64;
@@ -61,6 +62,15 @@ bot.catch((err) => {
 // 🚀 Express setup
 const server = express();
 server.use(express.json());
+
+// ✅ ✅ CORS FIX 
+server.use(
+  cors({
+    origin: ["https://talabasirlaribot.web.app"], // Your Firebase Hosting origin
+    methods: ["GET", "POST"],
+    credentials: true,
+  })
+);
 
 server.get("/", (_req, res) => {
   res.send("Bot is healthy.");
